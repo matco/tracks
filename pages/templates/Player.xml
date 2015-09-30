@@ -1,0 +1,31 @@
+<p:border xmlns:p="http://matco.name/schema/pastry.xsd">
+	<script type="text/javascript" src="public/player.js"></script>
+	<h2>Player</h2>
+	<div id="player_bar" class="border" style="opacity: 0.2;">
+		<div>
+			Now playing: <span id="playing"></span>
+			<audio id="player" controls="controls" autoplay="autoplay"></audio>
+			Vote for the song:
+			<span id="notation" style="margin-left: 10px; cursor: pointer;">
+				<img id="star_1" style="opacity: 0.5;" src="public/icons/star.png" />
+				<img id="star_2" style="opacity: 0.5;" src="public/icons/star_white.png" />
+				<img id="star_3" style="opacity: 0.5;" src="public/icons/star_white.png" />
+				<img id="star_4" style="opacity: 0.5;" src="public/icons/star_white.png" />
+				<img id="star_5" style="opacity: 0.5;" src="public/icons/star_white.png" />
+			</span>
+		</div>
+		<div id="history" style="margin-top: 1rem; display: none;">
+			Previously played:
+			<ul></ul>
+		</div>
+	</div>
+	<form id="search" method="post">
+		<p class="border">
+			<input type="text" name="index" style="display: none;" />
+			Search for a song <input type="search" name="search" placeholder="title" size="15" style="margin-left: 10px;" />
+			<img id="loading" src="public/images/loading.png" style="width: 18px; margin-right: 5px; vertical-align: text-bottom; visibility: hidden;"/>
+			or <a href="#" id="refresh">try a random one</a>
+		</p>
+	</form>
+	<div id="results" style="margin: 1rem 2rem;"></div>
+</p:border>

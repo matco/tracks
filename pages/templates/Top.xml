@@ -1,0 +1,8 @@
+<p:container xmlns:p="http://matco.name/schema/pastry.xsd">
+	<h2>Top</h2>
+	<p:ranking limit="literal:8" />
+
+	<p>
+		This is the same ranking component used in another page. This time, it displays the 8 most listened tracks.
+	</p>
+</p:container>

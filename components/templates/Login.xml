@@ -1,0 +1,112 @@
+<p:container xmlns:p="http://matco.name/schema/pastry.xsd">
+	<h2>Authentification</h2>
+	<p>
+		Welcome! This is the sample application I wrote with my tiny MVC PHP framework, named Pastry, as a proof of concept. It allows you to explore a music database (that has been filled in by Scanlan, a small script written in Perl that is able to scan and index files).
+	</p>
+	<p>
+		Pastry is inspired by the Java framework <a href="https://tapestry.apache.org">Tapestry</a>. The framework takes care of the C and the V layers from the MVC pattern. Additionally, a tiny ORM handles the M layer.
+	</p>
+	<p>
+		The framework is purely based on components. For example, this page is built using a component named "Border". It provides the header and the footer and is contains almost only pure HTML (except for the display of the generation timer and the queries counter in the footer). It also checks if the user is authenticated. If it's not the case, the "Border" displays another component named "Login" that contains a login form that you can see below.
+		<br />
+		Forms are a very interesting part of the framework. An automatic binding is created between the view and the controller for each input, so you don't have to manage the glue code to retrieve data from the form in the HTTP request. Components are assembled in the HTML and communicate through XML attributes. You'll find below the code required to build the login form.
+	</p>
+	<p class="border">
+		<span toggle="code_view">Show code of the view <img src="public/icons/page_white_code.png" /></span>
+		<br />
+		<code id="code_view" style="display: none;">
+			<pre class="sh_html">
+<![CDATA[
+<p:form id="literal:loginForm" method="literal:post">
+	<p:condition test="hasError">
+		<p class="error">${error}</p>
+	</p:condition>
+	<p:inputfield
+		id="literal:login"
+		name="literal:login"
+		value="login"
+		validators="literal:[required]"
+		autocomplete="literal:true"
+		label="literal:Login"
+		placeholder="literal:Your login"
+		autofocus="literal:true" />
+	<p:inputfield
+		id="literal:password"
+		name="literal:password"
+		value="password"
+		validators="literal:[required]"
+		password="literal:true"
+		autocomplete="literal:true"
+		label="literal:Password"
+		placeholder="literal:Your password" />
+	<p:submit name="literal:authenticate" value="literal:Login" />
+</p:form>
+]]>
+			</pre>
+		</code>
+	</p>
+	<p class="border">
+		<span toggle="code_controller">Show code of the controller <img src="public/icons/page_white_php.png" /></span>
+		<br />
+		<code id="code_controller" style="display: none;">
+			<pre class="sh_php">
+<![CDATA[
+final class Login extends Component {
+
+	public ?string $login;
+	public ?string $password;
+	public ?string $error;
+
+	public function getHasError(): bool {
+		return !empty($this->error);
+	}
+
+	public function authenticate(): void {
+		$this->error = null;
+		try {
+			$user = User::authenticate($this->login, $this->password);
+			$_SESSION['authenticated'] = true;
+			$_SESSION['user'] = $user;
+			$expiration = time() + 3600;
+			$GLOBALS['logger']->addLog(Logger::LEVEL_INFO, Logger::TYPE_USER, __METHOD__, null, 'User '.$this->login.' logged in successfully');
+		}
+		catch(Exception $e) {
+			$this->error = 'Wrong login or password';
+		}
+	}
+}
+]]>
+			</pre>
+		</code>
+	</p>
+
+	<p>
+		You can use "guest" as the login and the password to continue. Before that, do not hesitate to play with the form, like leaving one of the field blank or typing wrong credentials.
+	</p>
+	<div class="border">
+		<p:form id="literal:loginForm" method="literal:post">
+			<p:condition test="hasError">
+				<p class="error">${error}</p>
+			</p:condition>
+			<p:inputfield
+				id="literal:login"
+				name="literal:login"
+				value="login"
+				validators="literal:[required]"
+				autocomplete="literal:true"
+				label="literal:Login"
+				placeholder="literal:Your login"
+				autofocus="literal:true" />
+			<p:inputfield
+				id="literal:password"
+				name="literal:password"
+				value="password"
+				validators="literal:[required]"
+				password="literal:true"
+				autocomplete="literal:true"
+				label="literal:Password"
+				placeholder="literal:Your password" />
+			<p:submit name="literal:authenticate" value="literal:Login" />
+		</p:form>
+	</div>
+</p:container>

@@ -1,0 +1,59 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://matco.name/schema/pastry.xsd">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Tracks</title>
+		<link rel="icon" type="image/png" href="public/icons/music.png" />
+		<!--css external tools inclusion-->
+		<link href="public/external/shjs/sh_style.css" rel="stylesheet" type="text/css" />
+		<!--css inclusion-->
+		<link href="public/css/global.css" rel="stylesheet" type="text/css" title="default" />
+
+		<!--javascript external tools inclusion-->
+		<script type="text/javascript" src="public/external/shjs/sh_main.js"></script>
+		<script type="text/javascript" src="public/external/shjs/sh_javascript.js"></script>
+		<script type="text/javascript" src="public/external/shjs/sh_php.js"></script>
+		<script type="text/javascript" src="public/external/shjs/sh_html.js"></script>
+		<!--javascript inclusion-->
+		<script type="text/javascript" src="public/Toggle.class.js"></script>
+		<script type="text/javascript" src="public/Modal.class.js"></script>
+		<script type="text/javascript" src="public/tracks.js"></script>
+	</head>
+	<body>
+		<header>
+			<h1><a href="index.php">Tracks</a></h1>
+			<!--display navigation-->
+			<p:condition test="userIsAuthenticated">
+				<nav>
+					<p:action link="literal:home" active="literal:active">Hit parade</p:action>
+					<p:action link="literal:player" active="literal:active">Player</p:action>
+				</nav>
+				<div id="user">
+					Welcome ${username} - <p:action action="literal:logout">Logout</p:action>
+				</div>
+			</p:condition>
+		</header>
+
+		<!--display page-->
+		<p:condition test="userIsAuthenticated" negate="literal:false">
+			<main>
+				<p:body body="body" />
+			</main>
+		</p:condition>
+		<!--display login form-->
+		<p:condition test="userIsAuthenticated" negate="literal:true">
+			<main>
+				<p:login />
+			</main>
+		</p:condition>
+
+		<footer>
+			<img alt="stopwatch" src="public/icons/time.png" style="margin: 0 5px 5px 15px;" />
+			Page generated in ${generationTime} milliseconds
+			<img alt="database" src="public/icons/database_gear.png" style="margin: 0 5px 5px 15px;" />
+			${queriesNumber} queries done
+			<br />
+			Thanks to <a href="http://www.famfamfam.com/">FamFamFam</a> for the icons and <a href="http://shjs.sourceforge.net/">SHJS</a> for the syntax highlighter
+		</footer>
+	</body>
+</html>

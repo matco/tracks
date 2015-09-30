@@ -1,0 +1,14 @@
+<p:container xmlns:p="http://matco.name/schema/pastry.xsd">
+	<table>
+		<tr>
+			<th>Track</th>
+			<th>Play count</th>
+		</tr>
+		<p:loop items="files" item="file" index="index">
+			<tr class="${class}">
+				<td>${filename}</td>
+				<td style="text-align: right;">${playcount}</td>
+			</tr>
+		</p:loop>
+	</table>
+</p:container>

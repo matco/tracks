@@ -1,0 +1,84 @@
+<p:border xmlns:p="http://matco.name/schema/pastry.xsd">
+	<script type="text/javascript" src="public/home.js"></script>
+	<h2>Hit parade</h2>
+	<div class="border">
+		Here are the most listened tracks:
+		<p:ranking limit="literal:5" />
+	</div>
+
+	<p>
+		The block above is another example. This page simply displays the ranking component. This component is generic and takes the number of tracks to display as a parameter (5 in this case).
+	</p>
+	<p class="border">
+		<span toggle="code_view_page">Show code of this page <img src="public/icons/page_white_code.png" /></span>
+		<br />
+		<code id="code_view_page" style="display: none;">
+			<pre class="sh_html">
+<![CDATA[
+Here are the most listened tracks:
+<p:ranking limit="literal:5" />
+]]>
+			</pre>
+		</code>
+	</p>
+	<p class="border">
+		<span toggle="code_view_component">Show code of the ranking component <img src="public/icons/page_white_code.png" /></span>
+		<br />
+		<code id="code_view_component" style="display: none;">
+			<pre class="sh_html">
+<![CDATA[
+<p:container xmlns:p="http://matco.name/schema/pastry.xsd">
+	<table>
+		<tr>
+			<th>Track</th>
+			<th>Play count</th>
+		</tr>
+		<p:loop items="files" item="file" index="index">
+			<tr class="${class}">
+				<td>${filename}</td>
+				<td style="text-align: right;">${playcount}</td>
+			</tr>
+		</p:loop>
+	</table>
+</p:container>
+]]>
+			</pre>
+		</code>
+	</p>
+	<p class="border">
+		<span toggle="code_controller">Show code of the controller of the ranking component <img src="public/icons/page_white_php.png" /></span>
+		<br />
+		<code id="code_controller" style="display: none;">
+			<pre class="sh_php">
+<![CDATA[
+final class Ranking extends Component {
+
+	public $limit;
+	public $file;
+	public $index;
+
+	public function getFiles() {
+		return $GLOBALS['datacontext']->getObjects('File', null, 'playcount', 'desc', $this->limit ? $this->limit : 5, 0);
+	}
+
+	public function getFilename() {
+		return str_replace('&', '&amp;', $this->file->name);
+	}
+
+	public function getPlaycount() {
+		return $this->file->playcount;
+	}
+
+	public function getClass() {
+		return $this->index % 2 === 0 ? 'odd' : 'even';
+	}
+}
+]]>
+			</pre>
+		</code>
+	</p>
+
+	<p>
+		You can also display the same component in a modal panel if you <a href="index.php?page=top" id="top">click here</a>.
+	</p>
+</p:border>
