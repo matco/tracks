@@ -26,7 +26,7 @@ require_once('Logger.php');
 require_once('Factory.php');
 require_once('Renderer.php');
 require_once('Response.php');
-require_once('Sessions.php');
+require_once('DatabaseSessionHandler.php');
 
 //change configuration
 set_time_limit(10);
@@ -44,7 +44,7 @@ $GLOBALS['datacontext'] = new Datacontext();
 
 try {
 	//override sessions management
-	session_set_save_handler('Sessions::open', 'Sessions::close', 'Sessions::read', 'Sessions::write', 'Sessions::destroy', 'Sessions::clean');
+	session_set_save_handler(new DatabaseSessionHandler());
 	session_start();
 
 	//start buffer

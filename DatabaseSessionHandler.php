@@ -1,27 +1,26 @@
 <?php
 /**
- * Session management, using a php function to remplace sessions functions by user-defined function in order to store sessions in database instead of on file system
+ * Session management class, used to override the default session storage mechanism and store the sessions in the database
  * @package core
  */
-class Sessions {
+class DatabaseSessionHandler implements SessionHandlerInterface {
 	public function __construct() {
 	}
 
 	public function __destruct() {
 	}
 
-	private static function getConnection() {
+	private function getConnection() {
 		return ConnectionProvider::getConnection();
 	}
 
-	public static function open() {
-		$session_id = self::getConnection()->quote(session_id());
-		//session_regenerate_id();
+	public function open($path, $name) {
+		$session_id = $this->getConnection()->quote(session_id());
 		try {
-			$results = self::getConnection()->query(sprintf('SELECT COUNT(session_id) FROM sessions WHERE session_id = %s', $session_id));
+			$results = $this->getConnection()->query(sprintf('SELECT COUNT(session_id) FROM sessions WHERE session_id = %s', $session_id));
 			$session = $results->fetchFirstColumn();
 			if($session == 0) {
-				self::getConnection()->exec(sprintf('INSERT INTO sessions(session_id, session_last_modified) VALUES(%s, NOW())', $session_id));
+				$this->getConnection()->exec(sprintf('INSERT INTO sessions(session_id, session_last_modified) VALUES(%s, NOW())', $session_id));
 			}
 			$results->closeCursor();
 			return true;
@@ -32,11 +31,11 @@ class Sessions {
 		}
 	}
 
-	public static function write($session_id, $session_data) {
-		$session_id = self::getConnection()->quote($session_id);
-		$session_data = self::getConnection()->quote($session_data);
+	public function write($session_id, $session_data) {
+		$session_id = $this->getConnection()->quote($session_id);
+		$session_data = $this->getConnection()->quote($session_data);
 		try {
-			self::getConnection()->exec(sprintf('UPDATE sessions SET session_data = %s, session_last_modified = NOW() WHERE session_id = %s', $session_data, $session_id));
+			$this->getConnection()->exec(sprintf('UPDATE sessions SET session_data = %s, session_last_modified = NOW() WHERE session_id = %s', $session_data, $session_id));
 			return true;
 		}
 		catch(PDOException $e) {
@@ -45,14 +44,14 @@ class Sessions {
 		}
 	}
 
-	public static function close() {
+	public function close() {
 		return true;
 	}
 
-	public static function read($session_id) {
-		$session_id = self::getConnection()->quote($session_id);
+	public function read($session_id) {
+		$session_id = $this->getConnection()->quote($session_id);
 		try {
-			$results = self::getConnection()->query(sprintf('SELECT session_data FROM sessions WHERE session_id = %s', $session_id));
+			$results = $this->getConnection()->query(sprintf('SELECT session_data FROM sessions WHERE session_id = %s', $session_id));
 			$result = $results->fetchFirstColumn();
 			return empty($result) ? '' : $result;
 		}
@@ -62,10 +61,10 @@ class Sessions {
 		}
 	}
 
-	public static function destroy($session_id) {
-		$session_id = self::getConnection()->quote($session_id);
+	public function destroy($session_id) {
+		$session_id = $this->getConnection()->quote($session_id);
 		try {
-			self::getConnection()->exec(sprintf('DELETE FROM sessions WHERE session_id = %s', $session_id));
+			$this->getConnection()->exec(sprintf('DELETE FROM sessions WHERE session_id = %s', $session_id));
 			return true;
 		}
 		catch(PDOException $e) {
@@ -74,10 +73,10 @@ class Sessions {
 		}
 	}
 
-	public static function clean($max_lifetime) {
+	public function gc($max_lifetime) {
 		//if sessions haven't been modified for 1440s, this function is executed
 		try {
-			self::getConnection()->exec("DELETE FROM sessions WHERE session_last_modified < DATE_SUB(NOW(), INTERVAL $max_lifetime SECOND)");
+			$this->getConnection()->exec("DELETE FROM sessions WHERE session_last_modified < DATE_SUB(NOW(), INTERVAL $max_lifetime SECOND)");
 			return true;
 		}
 		catch(PDOException $e) {
@@ -86,9 +85,9 @@ class Sessions {
 		}
 	}
 
-	public static function logged() {
+	public function logged() {
 		try {
-			$results = self::getConnection()->query("SELECT COUNT(session_id) FROM sessions");
+			$results = $this->getConnection()->query("SELECT COUNT(session_id) FROM sessions");
 			return $results->fetchFirstColumn();
 		}
 		catch(PDOException $e) {
